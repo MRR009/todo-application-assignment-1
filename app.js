@@ -238,49 +238,6 @@ app.post("/todos/", async (request, response) => {
   response.send("Todo Successfully Added");
 });
 
-//API 5 =>
-
-app.put("/todos/:todoId/", async (request, response) => {
-  const { todoId } = request.params;
-  let updateColumn = "";
-  const requestBody = request.body;
-  switch (true) {
-    case requestBody.status !== undefined:
-      updateColumn = "Status";
-      break;
-    case requestBody.priority !== undefined:
-      updateColumn = "Priority";
-      break;
-    case requestBody.todo !== undefined:
-      updateColumn = "Todo";
-      break;
-  }
-  const previousTodoQuery = `
-        SELECT
-        *
-        FROM
-        todo
-        WHERE 
-        id = ${todoId};`;
-  const previousTodo = await database.get(previousTodoQuery);
-  const {
-    todo = previousTodo.todo,
-    priority = previousTodo.priority,
-    status = previousTodo.status,
-  } = request.body;
-  const updateTodoQuery = `
-        UPDATE
-        todo
-        SET
-        todo='${todo}',
-        priority='${priority}',
-        status='${status}'
-        WHERE
-        id = ${todoId};`;
-  await database.run(updateTodoQuery);
-  response.send(`${updateColumn} Updated`);
-});
-
 //API-6
 
 app.delete("/todos/:todoId/", async (request, response) => {
