@@ -3,6 +3,7 @@ const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const path = require("path");
 
+const camelcaseKeys = require("camelcase-keys");
 const { format, isValid, parse } = require("date-fns");
 const parseISO = require("date-fns/parseISO");
 
@@ -74,6 +75,7 @@ const hasDueDateProperty = (requestQuery) => {
 
 app.get("/todos/", async (request, response) => {
   let data = null;
+  let resArr = [];
   let getTodosQuery = "";
   const { search_q = "", priority, status, category } = request.query;
 
@@ -181,7 +183,11 @@ app.get("/todos/", async (request, response) => {
   }
 
   data = await database.all(getTodosQuery);
-  response.send(data);
+  data.forEach((Element) => {
+    var newObj = camelcaseKeys(Element);
+    resArr.push(newObj);
+  });
+  response.send(resArr);
 });
 
 //API 2 => Get specific todo
